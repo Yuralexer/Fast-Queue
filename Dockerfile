@@ -42,6 +42,9 @@ RUN uv venv && uv pip install -r pyproject.toml
 COPY manage.py .
 COPY testProProject ./testProProject
 # Add paths to apps here
+COPY auth ./auth
+COPY home ./home
+COPY queues ./queues
 
 EXPOSE 8000
 
