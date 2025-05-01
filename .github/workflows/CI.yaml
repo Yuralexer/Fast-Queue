@@ -66,7 +66,9 @@ jobs:
 
       - name: Create .env file
         run: |
-          echo "DJANGO_SECRET_KEY=${{ secrets.SECRET_KEY }}" >> /fastqueue/.env
+          cd fastqueue
+          echo "DJANGO_SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
+          cd ..
 
       - name: Run tests
         run: uv run make test
