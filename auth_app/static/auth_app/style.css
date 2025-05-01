@@ -1,0 +1,74 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+* {
+    font-family: 'Montserrat', sans-serif;
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f6f8ff;
+}
+
+.container {
+    background-color: #dee5ff;
+    padding: 20px;
+    border-radius: 10px;
+    width: 600px;
+    max-width: 99vw;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.container__header {
+    font-size: 36px;
+    color: #11296c;
+}
+
+.container__messages {
+    list-style: none;
+    background-color: #ffb9b9;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.container__form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.container__form > div {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+}
+
+.container__form > div > label {
+    font-weight: 500;
+    font-size: 18px;
+    margin: auto 5px;
+}
+
+.container__form > div > input {
+    font-size: 18px;
+    font-weight: 500;
+    background-color: #f3f6ff;
+    border: 0;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.container__form > button {
+    font-size: 18px;
+    color: #fff;
+    background-color: #2042e6;
+    padding: 10px;
+    border: 0;
+    border-radius: 5px;
+}
