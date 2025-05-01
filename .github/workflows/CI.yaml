@@ -64,10 +64,5 @@ jobs:
       - name: Install dependencies
         run: uv pip install -r pyproject.toml
 
-      - name: Create .env file
-        run: |
-          mkdir -p fastqueue
-          echo "DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}" >> fastqueue/.env
-
       - name: Run tests
         run: uv run make test
