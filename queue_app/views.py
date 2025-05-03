@@ -7,3 +7,13 @@ from django.http import HttpResponse
 @login_required(login_url="auth:sign-in")
 def index(request):
     return HttpResponse("Вы авторизовались! Ура!")
+
+
+@login_required(login_url="auth:sign-in")
+def queue_page_view(request):
+    return HttpResponse("Страница очереди")
+
+
+@login_required(login_url="auth:sign-in")
+def queue_create_view(request):
+    return HttpResponse("Страница создания очереди")
