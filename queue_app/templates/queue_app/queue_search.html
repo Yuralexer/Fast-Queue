@@ -1,0 +1,49 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Поиск очереди</title>
+    <link rel="stylesheet" href="{% static 'queue_app/queue_style.css' %}">
+</head>
+<body>
+    <div class="main">
+        <div class="user_info">
+            <p>Вы вошли как {{ user.first_name }} {{ user.last_name }}</p>
+            <a href="{% url 'auth:sign-out' %}">Выйти из аккаунта</a>
+        </div>
+        <div class="search_block">
+            <h1>Поиск очереди</h1>
+            <form method="get" action="{% url 'queue:index' %}">
+                {% csrf_token %}
+                <input name="search_request" type="search" placeholder="Поиск очереди по ключевому слову...">
+                <button type="submit">Найти</button>
+            </form>
+        </div>
+        <div class="queues_block">
+            <h2>{% if search_request is None %}Ваши очереди
+            {% else %}Результат по запросу <strong>{{ search_request }}</strong>{% endif %}</h2>
+            <div class="queues_grid">
+                {% if search_request is None %}
+                <a class="create_card" href="#">
+                    <h3>Создать очередь</h3>
+                </a>
+                {% endif %}
+                {% if queues.count == 0 and search_request is not None %}
+                    <p>По вашему запросу ничего не было найдено :(</p>
+                {% endif %}
+                {% for queue in queues %}
+                    <div class="queue_card">
+                        <div class="queue_card_content">
+                            <h3>{{ queue.name }}</h3>
+                            <p class="code_word">Кодовое слово: {{ queue.keyword }}</p>
+                            <p class="num_of_people">Кол-во людей: {{ queue.participants.count }}</p>
+                            <a href="{% url 'queue:queue_page' queue.id %}">Войти в очередь</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
