@@ -43,6 +43,7 @@ COPY manage.py .
 COPY testProProject ./testProProject
 # Add paths to apps here
 COPY auth_app ./auth_app
+COPY queue_app ./queue_app
 
 EXPOSE 8000
 
