@@ -5,7 +5,7 @@ from django.shortcuts import redirect, render
 
 from . import forms
 
-REDIRECT_URL = "http://127.0.0.1:8000/dashboard/"
+REDIRECT_URL = "queue:index"
 
 
 def index(request):

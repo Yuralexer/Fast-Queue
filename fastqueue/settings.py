@@ -41,6 +41,7 @@ DJANGO_APPS = [
 
 PROJECT_APPS = [
     "auth_app.apps.AuthAppConfig",
+    "queue_app.apps.QueueAppConfig",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS
