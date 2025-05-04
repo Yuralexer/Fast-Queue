@@ -11,11 +11,10 @@ User = get_user_model()
 class Queue(models.Model):
     name = models.CharField(max_length=255)
     keyword = models.SlugField(unique=True, default=uuid.uuid4, editable=False)
-    is_private = models.BooleanField(default=False)
     password = models.CharField(max_length=128, blank=True, null=True)
 
     owner = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='owned_queues')
-    participants = models.ManyToManyField(User, through='QueueMembership', related_name='queues')
+    participants = models.ManyToManyField(User, through='QueueParticipant', related_name='queues')
 
     current_index = models.IntegerField(default=0)
 
@@ -23,36 +22,58 @@ class Queue(models.Model):
     closed_at = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
-        return f"Очередь '{self.name}' / {self.owner.first_name} {self.owner.last_name}"
+        return self.name
+
+    def add_user_to_queue(self, user):
+        """Добавить пользователя в конец очереди"""
+        last_position = QueueParticipant.objects.filter(queue=self).count()
+        QueueParticipant.objects.create(queue=self, user=user, position=last_position + 1)
+
+    def find_user_in_queue(self, user):
+        """Найти id пользователя в очререди"""
+        if QueueParticipant.objects.filter(queue=self, user=user).exists():
+            return QueueParticipant.objects.filter(queue=self, user=user).first().position
+        return -1
 
     def move_point(self):
-        total = self.participants.count()
-        if total == 0:
-            return None
-        self.current_index = (self.current_index + 1) % total
-        self.save()
-        return self.get_current_participant()
-
-    def get_current_participant(self):
-        participants = list(self.participants.all().order_by('queuemembership__joined_at'))
-        if not participants:
-            return None
-        return participants[self.current_index]
+        """Передвинуть очередь — сдвинуть всех участников"""
+        participants = QueueParticipant.objects.filter(queue=self).order_by('position')
+        for qp in participants:
+            qp.position -= 1
+            qp.save()
+        QueueParticipant.objects.filter(queue=self, position__lte=0).delete()
 
     def clear_queue(self):
-        self.participants.clear()
-        self.current_index = 0
-        self.save()
+        """Очистить очередь"""
+        QueueParticipant.objects.filter(queue=self).delete()
+
+    def remove_user_from_queue(self, user):
+        """Удаляет пользователя из очереди и пересчитывает позиции"""
+        participant = QueueParticipant.objects.filter(queue=self, user=user).first()
+        if not participant:
+            return False
+
+        participant.delete()
+
+        remaining_participants = QueueParticipant.objects.filter(queue=self).order_by('joined_at')
+        for index, p in enumerate(remaining_participants, start=1):
+            p.position = index
+            p.save()
+
+        return True
+
+    def get_ordered_participants(self):
+        return QueueParticipant.objects.filter(queue=self).order_by('position')
 
 
-class QueueMembership(models.Model):
+class QueueParticipant(models.Model):
     queue = models.ForeignKey(Queue, on_delete=models.CASCADE)
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    joined_at = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    position = models.PositiveIntegerField()
 
     class Meta:
         unique_together = ('queue', 'user')
-        ordering = ['joined_at']
+        ordering = ['position']
 
     def __str__(self):
-        return f"{self.user.first_name} {self.user.last_name} в очереди '{self.queue.name}'"
+        return f"{self.user.first_name} {self.user.last_name} в {self.queue.name} (#{self.position})"

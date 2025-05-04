@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Поиск очереди</title>
-    <link rel="stylesheet" href="{% static 'queue_app/queue_style.css' %}">
+    <link rel="stylesheet" href="{% static 'queue_app/queue_search_style.css' %}">
 </head>
 <body>
     <div class="main">
@@ -25,7 +25,7 @@
             {% else %}Результат по запросу <strong>{{ search_request }}</strong>{% endif %}</h2>
             <div class="queues_grid">
                 {% if search_request is None %}
-                <a class="create_card" href="#">
+                <a class="create_card" href="{% url 'queue:queue_create' %}">
                     <h3>Создать очередь</h3>
                 </a>
                 {% endif %}
@@ -38,7 +38,7 @@
                             <h3>{{ queue.name }}</h3>
                             <p class="code_word">Кодовое слово: {{ queue.keyword }}</p>
                             <p class="num_of_people">Кол-во людей: {{ queue.participants.count }}</p>
-                            <a href="{% url 'queue:queue_page' queue.id %}">Войти в очередь</a>
+                            <a href="{% url 'queue:queue_page_join' queue.id %}">Войти в очередь</a>
                         </div>
                     </div>
                 {% endfor %}
