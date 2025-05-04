@@ -1,0 +1,22 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ошибка 404</title>
+    <link rel="stylesheet" href="{% static 'queue_app/queue_search_style.css' %}">
+</head>
+<body>
+    <div class="main">
+        <div class="user_info">
+            <p>Вы вошли как {{ user.first_name }} {{ user.last_name }}</p>
+            <a href="{% url 'auth:sign-out' %}">Выйти из аккаунта</a>
+        </div>
+        <div class="search_block">
+            <h1>Упс...</h1>
+            <p>Походу вы заблудились :/</p>
+            <a href="{% url 'queue:index' %}">Вернуться на главную</a>
+        </div>
+    </div>
+</body>
+</html>

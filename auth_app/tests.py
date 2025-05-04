@@ -62,6 +62,14 @@ class AuthTest(TestCase):
         self.assertRedirects(response, reverse('auth:sign-in'))
         self.assertFalse(response.context['user'].is_authenticated)
 
+    def test_sign_in_with_non_existing_user(self):
+        response = self.client.post(reverse('auth:sign-in-processing'), {
+            'email': 'fakeuser@example.com',
+            'password': 'fakeuserpassword'
+        })
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('auth:sign-in'))
+
     def test_sign_in_with_existing_user(self):
         CustomUser.objects.create_user(
             email="user2@example.com",
@@ -102,4 +110,3 @@ class AuthTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Пользователь с таким email уже существует")
         self.assertEqual(CustomUser.objects.filter(email="duplicate@example.com").count(), 1)
-
