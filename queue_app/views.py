@@ -71,7 +71,7 @@ def queue_password_processing(request, queue_id):
     queue = Queue.objects.get(id=queue_id)
     if queue.password != request.POST.get('queue_password'):
         messages.error(request, "Неправильный пароль.")
-        return redirect("queue:queue_page", queue_id)
+        return redirect("queue:queue_page_join", queue_id)
     queue.add_user_to_queue(request.user)
     return redirect("queue:queue_page", queue_id)
 
