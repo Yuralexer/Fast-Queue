@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 
-from .models import Queue, QueueParticipant
+from .models import Queue
 
 
 @login_required(login_url="auth:sign-in")
