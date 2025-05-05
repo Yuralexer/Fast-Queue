@@ -1,0 +1,65 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Создание очереди</title>
+    <link rel="stylesheet" href="{% static 'queue_app/queue_create_style.css' %}">
+</head>
+<body>
+    <div class="main">
+        <div class="user_info">
+            <p>Вы вошли как {{ user.first_name }} {{ user.last_name }}</p>
+            <a href="{% url 'auth:sign-out' %}">Выйти из аккаунта</a>
+        </div>
+        <a href="{% url 'queue:index' %}">Вернуться домой</a>
+        <div class="create_block">
+            <h1>Создание очереди</h1>
+            {% if messages %}
+            <ul class="container__messages">
+            {% for message in messages %}
+                <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+            {% endfor %}
+            {% endif %}
+            </ul>
+            <form id="create_form" method="post" action="{% url 'queue:queue_create' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label class="title">Название очереди</label>
+                    <input class="form-control" name="queue_name" type="text" placeholder="Введите название очереди..." required>
+                </div>
+                <div class="form-group">
+                    <label class="title">Ключевое слово</label>
+                    <input class="form-control" name="queue_keyword" type="text" placeholder="Введите ключевое слово..." required>
+                </div>
+                <div class="form-group">
+                    <label class="title">Приватность</label>
+                    <label class="switch">
+                        <input name="queue_private" type="checkbox" id="private-flag">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div id="private-password" class="form-group">
+                    <label class="title">Пароль</label>
+                    <input class="form-control" name="queue_password" type="password" placeholder="Введите пароль...">
+                </div>
+                <button type="submit">Войти в очередь</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('create_form');
+            const privateFlag = document.getElementById('private-flag');
+            const privatePasswordInput = document.getElementById('private-password');
+
+            privatePasswordInput.style.display = privateFlag.checked ? 'flex' : 'none';
+
+            privateFlag.addEventListener('change', function() {
+                privatePasswordInput.style.display = privateFlag.checked ? 'flex' : 'none';
+            });
+        });
+    </script>
+</body>
+</html>

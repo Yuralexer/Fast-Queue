@@ -1,0 +1,27 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Регистрация</title>
+    <link rel="stylesheet" href="{% static 'auth_app/style.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h2 class="container__header">Регистрация</h2>
+        {% if messages %}
+            <ul class="container__messages">
+            {% for message in messages %}
+                <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+        <form class="container__form" method="post" action="{% url 'auth:sign-up-processing' %}">
+            {% csrf_token %}
+            {{ form.as_div }}
+            <button type="submit">Зарегистрироваться</button>
+        </form>
+        <p>У вас уже есть аккаунта? <a href="{% url 'auth:sign-in' %}">Войти</a></p>
+    </div>
+</body>
+</html>

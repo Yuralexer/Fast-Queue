@@ -1,0 +1,87 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Очередь {{ queue.name }}</title>
+    <link rel="stylesheet" href="{% static 'queue_app/queue_page_style.css' %}">
+</head>
+<body>
+    <div class="main">
+        <div class="user_info">
+            <p>Вы вошли как {{ user.first_name }} {{ user.last_name }}</p>
+            <a href="{% url 'auth:sign-out' %}">Выйти из аккаунта</a>
+        </div>
+        <a href="{% url 'queue:index' %}">Вернуться домой</a>
+        <div class="queue_block">
+            <div class="queue_info">
+                <div class="queue_info_content">
+                    <div class="queue_name">
+                        <h4>Очередь</h4>
+                        <h1>{{ queue.name }}</h1>
+                    </div>
+                    <p>Ключевое слово: <strong>{{ queue.keyword }}</strong></p>
+                    {% if queue.password is None %}
+                        <p>Очередь является <strong>публичной</strong>.
+                            Каждый пользователь FastQueue может войти в вашу очередь.</p>
+                    {% else %}
+                        <p>Очередь является <strong>приватной</strong>.
+                            Для входа в очередь пользователям необходимо ввести пароль.</p>
+                    {% endif %}
+                    {% if queue.owner == user and queue.password is not None %}
+                        <p class="password_block">Пароль для входа:
+                            <strong id="password">{{ queue.password }}</strong>
+                            <button id="show_password_btn">Показать пароль</button>
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="queue_list">
+                <div class="queue_list_content">
+                    <h2>Люди в очереди</h2>
+                    <div class="queue-grid">
+                        <div class="grid-header">№</div>
+                        <div class="grid-header">Имя и фамилия</div>
+                        {% for qp in queue.get_ordered_participants %}
+                            <div class="grid-item">{{ qp.position }}</div>
+                            <div class="grid-item">{{ qp.user.first_name }} {{ qp.user.last_name }}</div>
+                        {% empty %}
+                            <div class="grid-item" style="grid-column: span 2;">Очередь пуста</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="control-panel">
+            {% if user == queue.owner %}
+                <a href="{% url 'queue:queue_page_next' queue.id %}"
+                   class="control-panel-btn next-btn">Следующий</a>
+                <a href="{% url 'queue:queue_page_clear' queue.id %}"
+                   class="control-panel-btn clear-btn">Очистить очередь</a>
+                <a href="{% url 'queue:queue_page_delete' queue.id %}"
+                   class="control-panel-btn delete-btn">Удалить очередь</a>
+            {% else %}
+                <a href="{% url 'queue:queue_page_exit' queue.id %}"
+                   class="control-panel-btn exit-btn">Выйти из очереди</a>
+            {% endif %}
+        </div>
+    </div>
+    {% if user == queue.owner %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let password_btn = document.getElementById("show_password_btn");
+            let password_text = document.getElementById('password');
+
+            password_text.style.display = (password_btn.innerText === "Показать пароль") ? 'none' : 'block'
+
+            password_btn.innerText = "Показать пароль";
+
+            password_btn.addEventListener('click', () => {
+                password_btn.innerText = (password_btn.innerText === "Показать пароль") ? 'Скрыть пароль' : 'Показать пароль'
+                password_text.style.display = (password_btn.innerText === "Показать пароль") ? 'none' : 'block'
+            })
+        });
+    </script>
+    {% endif %}
+</body>
+</html>
