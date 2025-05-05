@@ -153,8 +153,7 @@ def queue_page_view_delete(request, queue_id):
 @login_required(login_url="auth:sign-in")
 def queue_page_view_exit(request, queue_id):
     queue = Queue.objects.filter(id=queue_id).first()
-    qp = QueueParticipant.objects.filter(queue=queue, user=request.user).first()
-    if queue and qp:
-        qp.delete()
+    if queue and queue.find_user_in_queue(request.user) != -1:
+        queue.remove_user_from_queue(request.user)
         return redirect("queue:index")
     return redirect("queue:queue_page", queue_id=queue_id)

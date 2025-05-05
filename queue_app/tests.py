@@ -242,3 +242,10 @@ class QueueTest(TestCase):
         self.assertRedirects(response, reverse('queue:index'))
         self.public_queue.refresh_from_db()
         self.assertTrue(self.public_queue.find_user_in_queue(self.second_auth_user) == -1)
+
+    def test_second_user_position_after_first_user_exit(self):
+        self.client1.get(reverse("queue:queue_page_join", args=[self.public_queue.id]))
+        self.client2.get(reverse("queue:queue_page_join", args=[self.public_queue.id]))
+        response = self.client1.get(reverse("queue:queue_page_exit", args=[self.public_queue.id]))
+        self.assertTrue(self.public_queue.find_user_in_queue(self.first_auth_user) == -1)
+        self.assertTrue(self.public_queue.find_user_in_queue(self.second_auth_user) == 1)

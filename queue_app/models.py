@@ -55,7 +55,7 @@ class Queue(models.Model):
 
         participant.delete()
 
-        remaining_participants = QueueParticipant.objects.filter(queue=self).order_by('joined_at')
+        remaining_participants = QueueParticipant.objects.filter(queue=self).order_by('position')
         for index, p in enumerate(remaining_participants, start=1):
             p.position = index
             p.save()
